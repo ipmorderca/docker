@@ -1,0 +1,13 @@
+TAKIE BYŁO ZADANIE:
+- Your Nginx reverse proxy should route their request to different web applications as follow:
+     * User enter localhost:3888/app1 in their browser they should see the output from port 8888 
+        from nodeapp1
+     * User enter localhost:3888/app2 in their browser and they should see the output from port 
+        8889 from nodeapp2
+- Nodeapp1:
+       when user access localhost:8888 they should see 'I am nodeapp1' in their browser.
+- Nodeapp2:
+       when user access localhost:8889 they should see 'I am nodeapp2' in their browser.
+Verification:
+* To verify that your reverse proxy is working, we will remove your reverse proxy from all related files in the code base and expect browser no longer showing 'I am nodeapp1' at localhost:3888/app1 once your nginx reverse proxy has been removed followed by `docker-compose down` and then `docker-compose up -d`.
+

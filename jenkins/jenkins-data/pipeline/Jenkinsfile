@@ -1,0 +1,52 @@
+pipeline {
+
+    agent any
+    
+    environment {
+        PASS = credentials('registry-pass') 
+    }
+
+    stages {
+
+        stage('Build') {
+            steps {
+                sh '''
+                    ./jenkins/build/mvn.sh mvn -B -DskipTests clean package #stworzenie pliku jar
+                    ./jenkins/build/build.sh  #zbudowanie z pliku jar obrazu działającego
+
+                '''
+            }
+
+            post {
+                success {
+                   archiveArtifacts artifacts: 'java-app/target/*.jar', fingerprint: true # Jeśli budowanie obrazu sie powiedzie , wtedy zachowywane są pliki .jar. Tzw. postaction w jenkinsie
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh './jenkins/test/mvn.sh mvn test' # skladnia test w poleceniu mvn pozwala na testowanie, stad 2 raz wykorzystany ten sam skrypt.
+            }
+
+            post {
+                always {
+                    junit 'java-app/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Push') {
+            steps {
+                sh './jenkins/push/push.sh' # jesli test jest sucessful, to wtedy leci push do docker hub
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh './jenkins/deploy/deploy.sh'
+            }
+        }
+    }
+}
+

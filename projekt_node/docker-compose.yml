@@ -1,0 +1,13 @@
+web:
+  image: nginx
+  volumes:
+   - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+  ports:   
+   - "3888:80"
+node1: 
+  container_name: node111
+  build: ./node1/
+  volumes:
+   - ./node1:/home/node/app2
+  ports:
+   - "8888:80"
